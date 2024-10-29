@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tic-Tac-Toe - Odin</title>
+    <link rel="stylesheet" href="styles.css" type="text/css" charset="utf-8" />
+</head>
+<body>
+    <header>
+        <h1>Tic-Tac-Toe Game</h1>
+        <button id="startGameBtn">&#9787; Start A New Game!</button>
+        <dialog id="startModal">
+        <div class="modal-content">
+          <button class="closeModal">&times; Close</button>
+          <form method="dialog" class="start-game">
+            <fieldset>
+                <legend>Let's setup your game!</legend>
+                <p><i>All fields are required.</i></p>
+                <p>
+                    <label for="playerone_name">Player One Name: (required)</label>
+                    <input type="text" name="playerone_name" id="playerone_name" required />
+                </p>
+                <p>
+                    <label for="playertwo_name">Player Two Name: (required)</label>
+                    <input type="text" name="playertwo_name" id="playertwo_name" required />
+                </p>
+            </fieldset>
+            <button type="submit" id="startGameSubmit" formnovalidate>&#9787; Start</button>
+        </form>
+        </div>
+    </dialog>
+    </header>
+    <main>
+        <div class="container">
+            <h1 class="turn"></div>
+            <div class="board"></div>
+          </div>
+    </main>
+    <script src="script.js"></script>
+</body>
+</html>
