@@ -1,72 +1,85 @@
 function gameBoard() {
+    
     const board = [];
   
     for(let i = 0; i < 3; i++){
         board[i] = [];
         for(let j = 0; j < 3 ; j++){
-            board[i].push(null);
+            board[i].push(cell());
         }
     }
 
     const getBoard = () => board;
 
-    
     const placeMarker = (row, column, player) => {
-        if( board[row][column] === null ) {
+        if( board[row][column].getValue() === "" ) {
             board[row][column].addMarker(player);
         };
       };
 
-
       const printBoard = () => {
-        console.log(`
-          ${board[0][0]} | ${board[0][1]} | ${board[0][2]}
-          ---------
-          ${board[1][0]} | ${board[1][1]} | ${board[1][2]}
-          ---------
-          ${board[2][0]} | ${board[2][1]} | ${board[2][2]}
-        `);
+        const boardWithCellValues = board.map((row) => row.map((cell) => cell.getValue()))
+        console.table(boardWithCellValues);
       };
-
 
     return { getBoard, placeMarker, printBoard };
 };
 
 
-const playGame = function ( playerOne, playerTwo ) {
+function cell() {
+    let value = "";
+
+    const addMarker = (player) => {
+        value = player;
+    };
     
+    const getValue = () => value;
 
-
-    // loop rounds until winner or all positions are selected in a tie
-
-    // get player one position for X
-
-    // board[1] = "X";
-    // console.log(board[1]);
-
-
-    // get player two position for O
-
-    // check for winner or tie
-
-
-
+    return { addMarker, getValue };
 };
 
 
 
-// Player object
-function createPlayer( name, marker ) {
-    return { name, marker };
+function gameController( playerOneName = "Player One", playerTwoName = "Player Two" ) {
+
+    const board = gameBoard();
     
-    // start sets player one name with marker X
-    // start sets player two name with marker O
+    const players = [
+        { name: playerOneName, marker: "X" }, 
+        { name: playerTwoName, marker: "O" }
+    ];
 
+
+    let activePlayer = players[0];
+
+    const switchPlayerTurn = () => {
+        activePlayer = activePlayer === players[0] ? players[1] : players[0];
+    };
+
+    const getActivePlayer = () => activePlayer;
+
+    const printNewRound = () => {
+        board.printBoard();
+        console.log( `${getActivePlayer().name}'s turn.` ); 
+    };
+
+    const playRound = ( row, column ) => {
+        
+        console.log( `Placing ${getActivePlayer().name}'s token into row ${row} column ${column}...` );
+          
+        board.placeMarker( row, column, getActivePlayer().marker );
+
+        //Check for winner
+
+        switchPlayerTurn();
+        
+        printNewRound();
+
+    };
+
+    printNewRound();
+
+
+return { getActivePlayer, playRound };
 };
-
-
-function playRound ( position, marker ) {
-    // push the marker to the position equal to the board object property
-
-    board[ position ].push( marker );
-};
+const game = gameController();
