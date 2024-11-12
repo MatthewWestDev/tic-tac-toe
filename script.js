@@ -30,10 +30,13 @@ function gameBoard() {
 
 
 
-function gameController( playerOneName = "Player One", playerTwoName = "Player Two" ) {
+function gameController( playerOne, playerTwo ) {
 
     const board = gameBoard();
     
+    playerOneName = playerOne || "Player One";
+    playerTwoName = playerTwo || "Player Two";
+
     const players = [
         { name: playerOneName, marker: "X" }, 
         { name: playerTwoName, marker: "O" }
@@ -107,10 +110,34 @@ return { getActivePlayer, playRound, getBoard: board.getBoard, getWinner, getDra
 
 
 function screenController() {
-    const game = gameController();
-    const message = document.querySelector(".message");
+    let game = gameController();
     const boardDiv = document.querySelector(".board");
     const squares = Array.from( document.getElementsByClassName("square" ));
+    disableSquares();
+
+    const startModal = document.querySelector("#startModal");
+    const message = document.querySelector(".message");
+
+    const gameBtn = document.querySelector("#gameBtn");
+    gameBtn.addEventListener("click", () => {
+        startModal.showModal();
+    });
+    const closeModal = document.querySelector(".closeModal");
+    closeModal.addEventListener("click", () => {
+        statModal.close();
+    });
+
+    const playerOne = document.querySelector("#playerone_name");
+    const playerTwo = document.querySelector("#playertwo_name");
+    const startGameSubmit = document.querySelector("#startGameSubmit");
+    
+    startGameSubmit.addEventListener("click", (e) => {
+        e.preventDefault();
+        game = gameController( playerOne.value, playerTwo.value );
+        startModal.close();
+        updateScreen();
+        enableSquares();
+    });
 
     function disableSquares() {
         squares.forEach( square => {
@@ -118,21 +145,24 @@ function screenController() {
         });
     };
 
-    const updateScreen = () => {
+    function enableSquares() {
+        squares.forEach( square => {
+            square.disabled = false;
+        });
+    };
 
-        function resetSquares () {
-            squares.forEach( square => {
+    function updateScreen() {
+
+        squares.forEach( square => {
                 square.textContent = "e";
             });
-        };
-        resetSquares();
 
         const board = game.getBoard();
         let activePlayer = game.getActivePlayer();
         let winner = game.getWinner();
         let draw = game.getDraw();
-        message.textContent =  `${activePlayer.name}'s turn...`;
 
+        message.textContent =  `${activePlayer.name}'s turn...`;
         
         squares.forEach(( square, index ) => {
             square.textContent = board[index];
@@ -140,15 +170,12 @@ function screenController() {
 
         if ( winner !== null ) {
             message.textContent =  `${activePlayer.name} Wins...`;
-            disableSquares();
-            // show reset and replay buttons
-            return;
+            endGame();
         }; 
         
         if ( draw !== null ) {
             message.textContent =   `It's a draw...`;
-            // show reset and replay buttons
-            return;
+            endGame();
         };
     };
 
@@ -159,8 +186,10 @@ function screenController() {
     };
     boardDiv.addEventListener( "click", clickHandlerSquares );
 
- 
-    updateScreen();
+    function endGame() {
+        disableSquares();
+        gameBtn.textContent = "Play Again!";
+    };
 
 };
 
