@@ -8,7 +8,7 @@ function gameBoard() {
   
     const getBoard = () => board;
 
-    const placeMarker = (index, player) => {
+    const placeMarker = ( index, player ) => {
         if( board[index] === "" ) {
             board[index] = player;
             return true;
@@ -52,6 +52,11 @@ function gameController( playerOneName = "Player One", playerTwoName = "Player T
         console.log( `${getActivePlayer().name}'s turn.` ); 
     };
 
+    let winner = null;
+    const getWinner = () => winner;
+    let draw = null;
+    const getDraw = () => draw;
+
     function checkForWinner () {
         const winPatterns = [
             [0, 1, 2], [3, 4, 5], [6, 7, 8], // Rows
@@ -78,15 +83,15 @@ function gameController( playerOneName = "Player One", playerTwoName = "Player T
     const playRound = ( index ) => {
           
         board.placeMarker( index, getActivePlayer().marker );
-        const winner = checkForWinner();
-        const draw = checkForDraw();
+        const checkWinner = checkForWinner();
+        const checkDraw = checkForDraw();
 
-        if ( winner ) {
+        if ( checkWinner ) {
             console.log( `${getActivePlayer().name} wins...` );
-            setGameOver();
-        } else if ( draw ) {
-            console.log( "It's a Draw..." );
-            setGameOver();
+            winner = true;
+        } else if ( checkDraw ) {
+            console.log( "It's a draw..." );
+            draw = true;
         } else {
             switchPlayerTurn();
             printNewRound();
@@ -96,14 +101,67 @@ function gameController( playerOneName = "Player One", playerTwoName = "Player T
 
     printNewRound();
 
-    const setGameOver = () => {
-        console.log( "Refesh the browser to play again..." );
-        return;
-    };
-
-return { getActivePlayer, playRound };
+return { getActivePlayer, playRound, getBoard: board.getBoard, getWinner, getDraw };
 };
 
 
 
-const game = gameController();
+function screenController() {
+    const game = gameController();
+    const message = document.querySelector(".message");
+    const boardDiv = document.querySelector(".board");
+    const squares = Array.from( document.getElementsByClassName("square" ));
+
+    function disableSquares() {
+        squares.forEach( square => {
+            square.disabled = true;
+        });
+    };
+
+    const updateScreen = () => {
+
+        function resetSquares () {
+            squares.forEach( square => {
+                square.textContent = "e";
+            });
+        };
+        resetSquares();
+
+        const board = game.getBoard();
+        let activePlayer = game.getActivePlayer();
+        let winner = game.getWinner();
+        let draw = game.getDraw();
+        message.textContent =  `${activePlayer.name}'s turn...`;
+
+        
+        squares.forEach(( square, index ) => {
+            square.textContent = board[index];
+        });
+
+        if ( winner !== null ) {
+            message.textContent =  `${activePlayer.name} Wins...`;
+            disableSquares();
+            // show reset and replay buttons
+            return;
+        }; 
+        
+        if ( draw !== null ) {
+            message.textContent =   `It's a draw...`;
+            // show reset and replay buttons
+            return;
+        };
+    };
+
+    function clickHandlerSquares(e) {
+        const selectedSquare = e.target.dataset.index;
+        game.playRound( selectedSquare );
+        updateScreen();
+    };
+    boardDiv.addEventListener( "click", clickHandlerSquares );
+
+ 
+    updateScreen();
+
+};
+
+screenController();
