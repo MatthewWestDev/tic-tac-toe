@@ -151,10 +151,24 @@ header {
     cursor: pointer;
     font-size: 60px;
     font-weight: bolder;
+    background-color: rgba(255, 255, 255, 0.2);
+    border: none;
+}
+
+.board button:hover {
+    background-color: rgba(255, 255, 255, 0.6)
 }
 
 .board button:disabled {
     cursor:default;
+    color: black;
 }
 
+.board button:disabled:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+}
 
+.board button.win, .board button.win:hover {
+    background-color: green;
+    color: gainsboro;
+}

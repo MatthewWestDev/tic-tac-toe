@@ -2,10 +2,6 @@ function gameBoard() {
     
      board = ["", "", "", "", "", "", "", "", ""];
 
-     const resetBoard = () => {
-        return board = ["", "", "", "", "", "", "", "", ""];
-    };
-  
     const getBoard = () => board;
 
     const placeMarker = ( index, player ) => {
@@ -25,7 +21,7 @@ function gameBoard() {
             ${board[6]} | ${board[7]} | ${board[8]}
         `)};
 
-    return { getBoard, resetBoard, placeMarker, printBoard };
+    return { getBoard, placeMarker, printBoard };
 };
 
 
@@ -70,9 +66,9 @@ function gameController( playerOne, playerTwo ) {
         const b = board.getBoard();
         
         for (let pattern of winPatterns) {
-                const [x,y,z] = pattern;
-                if( b[x] && b[x] === b[y] && b[x] === b[z] ) {
-                return activePlayer;
+            const [x,y,z] = pattern;
+            if( b[x] && b[x] === b[y] && b[x] === b[z] ) {
+                return winner = pattern;
             }   
         }
         
@@ -91,7 +87,7 @@ function gameController( playerOne, playerTwo ) {
 
         if ( checkWinner ) {
             console.log( `${getActivePlayer().name} wins...` );
-            winner = true;
+            return winner;
         } else if ( checkDraw ) {
             console.log( "It's a draw..." );
             draw = true;
@@ -135,6 +131,9 @@ function screenController() {
         e.preventDefault();
         game = gameController( playerOne.value, playerTwo.value );
         startModal.close();
+        squares.forEach( square => {
+            square.classList.remove("win");
+        });
         updateScreen();
         enableSquares();
     });
@@ -151,10 +150,16 @@ function screenController() {
         });
     };
 
+    function winningSquares( winArr ) {
+        winArr.forEach( index => {
+            squares[index].classList.add("win");
+        });
+    };
+
     function updateScreen() {
 
         squares.forEach( square => {
-                square.textContent = "e";
+                square.textContent = "";
             });
 
         const board = game.getBoard();
@@ -166,10 +171,14 @@ function screenController() {
         
         squares.forEach(( square, index ) => {
             square.textContent = board[index];
+            if ( square.textContent !== "" ) {
+                square.disabled = true;
+            };
         });
 
         if ( winner !== null ) {
             message.textContent =  `${activePlayer.name} Wins...`;
+            winningSquares( winner );
             endGame();
         }; 
         
