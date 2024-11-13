@@ -124,7 +124,7 @@ function screenController() {
     });
     const closeModal = document.querySelector(".closeModal");
     closeModal.addEventListener("click", () => {
-        statModal.close();
+        startModal.close();
     });
 
     const playerOne = document.querySelector("#playerone_name");
